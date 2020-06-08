@@ -1,0 +1,80 @@
+1. Create a Directory and initialize git, .gitignore, .README.md, LICENSE (for open source) and commit on github.
+2. Activate the vitual environment using pycharm Project setting and add a new interpreter
+3. Download django, django-restframework
+4. Create a new djago app using "django-admin startproject appname . " . [ . is necessary to create the project in current folder otherwise project will be created on a subfolder]
+5. Create a new app using 'python manage.py appname'
+6. Now configure the settings.py and add 'rest_framework', 'rest_framework.authtoken',  'app_name.apps.ProfilesApiConfig' to installed apps
+
+****************************************************************************************************************************************
+                                            OVERRIDING DJANGO DEFAULT USER-MODEL
+
+a. Django inbuilt comes with UserModel inbuild with it. We can override the default user model so we can set extra functionlity
+   to user table
+b. To override the default UserModel create an app and override the UseModel by extending (AbstractBaseUser, PermissionsMixin) in the model
+    Provide the custom fields needs to be required when user is signed up
+c. Now create a UserProfileManager  Model which extends BaseUserManager. It will be responsible for creating user and
+   creating a superuser from command line because we have changed the default user validation field to custom validation field.
+d. to use the custom User profile manager for the django app add the following lines to settings.py :
+   AUTH_USER_MODEL = "app_name.custom_user_modelClassName"
+   ex : AUTH_USER_MODEL = 'profile_api.UserProfile'
+e. Now apply the migration to populate the db with these changes
+   a. python manage.py makemigrations
+   b. python manage.py migrate
+f. Now enable the admin into the admin.py.
+g. create a superuser using "python manage.py createsuperuser" and create a superuser and login to the admin
+
+****************************************************************************************************************************************
+
+
+*** NOTE : Django will automatically add plural class name on the admin interface so make sure to always create a classname with singular word
+    ex : UserModel class will be shown as User models
+
+
+****************************************************************************************************************************************
+                                                            API VIEWS
+
+a. Api View is used for creating apis for multiple http requests (get, post, put, patch, delete)
+b. It would be mostly used when we have to write a lot of custom logic inside the view.
+c. To use an api view create a class which will extend "APIView" on views.py. On that class we can write various http request which will be rendered
+   according to mapped url pattern.
+d. In urls.py mentions the pathname along with className of ApiViews which you want to render as APIView
+   Ex : path('api/', views.HelloApiView.as_view())
+e. Now create a Serializer which will convert the input to the python object and vice-versa
+f. Basically Serializer will be used to support the requests like post, put, update (Except get request) on the endpoint
+g. Create a new file in the module named Serializer.py
+g. Create a class which will extend "serializers.Serializer"
+h. Now define the fields in the class which will be validated later during post, put, patch etc
+i. Now we can use the serializer in views.py to handle post, put etc requests
+
+
+
+
+****************************************************************************************************************************************
+                                                           VIEW SET ( NOT IMPORTANT )
+
+a. It is similar to the APIViews but mostly used when we have to mostly deal with the standard db operations, working with objects
+   and write simple logic.
+   These are the various methods supported by ViewSet :
+   a) list  // getting list of objects
+   b) create // creating new objects
+   c) retrieve // getting a specific object
+   d) update // updating an object
+   e) partial_update // updating a  part of an object
+   f) destroy // destroy an object
+b. To create a ViewSet create a class in views.py which will extend ViewSet from rest_framework.viewsets
+c. To register a created ViewSet class create a router object in urls.py similar to done in url.py of profiles_api
+d. Register the created ViewSet class in the router and include the router endpoint in the path of urls.py.
+e. while testing the viewset api only get and post are visible firstly then if we want to use the other methods we need
+   to manually append the primary key in url/primary_key in the brower to use those methods
+   ex : http://127.0.0.1:8000/hello-viewset   # Only get, post allowed
+        http://127.0.0.1:8000/hello-viewset/1/  # Put, Patch, Delete Allowed because we are passing the primary key at the end of url
+
+
+
+
+
+
+
+
+
+
